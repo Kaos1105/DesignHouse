@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\VerificationController;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Http\Request;
@@ -28,11 +29,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 // Route for guest only
-Route::middleware([])->group(function () {
+Route::middleware('guest')->group(function () {
     Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('register', [AuthController::class, 'register'])->name('register');
     Route::post('verification/verify/{user}', [VerificationController::class, 'verify'])->name('verification.verify');
     Route::post('verification/resend', [VerificationController::class, 'resend'])->name('verification.resend');
     Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-    Route::post('password/email', [ResetPassword::class, 'reset'])->name('password.reset');
+    Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.reset');
 });

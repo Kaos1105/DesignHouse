@@ -9,12 +9,13 @@ class PasswordResetNotification extends ResetPassword
 {
     public function toMail($notifiable): MailMessage
     {
-        $url = url(config('app.client_url') . '/password/reset', [
+        $appUrl = config('app.client_url', config('app.url'));
+        $url = url(route('password.reset', [
             'token' => $this->token,
             'email' => $notifiable->getEmailForPasswordReset(),
-        ], false);
+        ], false));
 
-        return $this->buildMailMessage($url);
+        return $this->buildMailMessage(str_replace(url('/api'), $appUrl, $url));
     }
 
 }
