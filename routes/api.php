@@ -4,7 +4,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\VerificationController;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +25,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Route group for authenticated users only
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::put('settings/profile', [\App\Http\Controllers\User\SettingsController::class, 'updateProfile']);
+    Route::put('settings/password', [\App\Http\Controllers\User\SettingsController::class, 'updatePassword']);
 });
 
 // Route for guest only
