@@ -27,6 +27,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::put('settings/profile', [\App\Http\Controllers\User\SettingsController::class, 'updateProfile']);
     Route::put('settings/password', [\App\Http\Controllers\User\SettingsController::class, 'updatePassword']);
+
+    //Upload Designs
+    Route::post('designs', [\App\Http\Controllers\Designs\UploadController::class, 'upload']);
+    Route::put('designs/{design}', [\App\Http\Controllers\Designs\DesignController::class, 'update']);
+    Route::delete('designs/{design}', [\App\Http\Controllers\Designs\DesignController::class, 'destroy']);
 });
 
 // Route for guest only
