@@ -29,6 +29,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('settings/password', [\App\Http\Controllers\User\SettingsController::class, 'updatePassword']);
 
     //Upload Designs
+    Route::get('designs/{id}', [\App\Http\Controllers\Designs\DesignController::class, 'findDesign']);
     Route::post('designs', [\App\Http\Controllers\Designs\UploadController::class, 'upload']);
     Route::put('designs/{design}', [\App\Http\Controllers\Designs\DesignController::class, 'update']);
     Route::delete('designs/{design}', [\App\Http\Controllers\Designs\DesignController::class, 'destroy']);
@@ -42,4 +43,8 @@ Route::middleware('guest')->group(function () {
     Route::post('verification/resend', [VerificationController::class, 'resend'])->name('verification.resend');
     Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
     Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.reset');
+
+    //Get design
+    Route::get('designs', [\App\Http\Controllers\Designs\DesignController::class, 'index']);
+    Route::get('users', [\App\Http\Controllers\User\UserController::class, 'index']);
 });

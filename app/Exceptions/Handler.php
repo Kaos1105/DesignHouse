@@ -60,5 +60,15 @@ class Handler extends ExceptionHandler
                 ], 404);
             }
         });
+
+        $this->renderable(function (ModelNotDefined $e, $request) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    "error" => [
+                        "message" => "No model defined"
+                    ]
+                ], 500);
+            }
+        });
     }
 }

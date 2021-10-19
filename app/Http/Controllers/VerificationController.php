@@ -4,14 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Repositories\Contracts\IUser;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 
 class VerificationController extends Controller
 {
-    public function __construct()
+    protected IUser $userRepo;
+
+    public function __construct(IUser $userRepo)
     {
+        $this->userRepo = $userRepo;
         //$this->middleware('signed')->only('verify');
         $this->middleware('throttle: 6,1')->only('resend');
     }
@@ -50,7 +54,7 @@ class VerificationController extends Controller
             'email' => 'required|email|max:255',
         ]);
 
-        $user = User::where('email', $data['email'])->first();
+        $user = $this->userRepo->findWhereFirst('email', $data['email']);
         if (!$user) {
             return response()->json([
                 "errors" => [

@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Designs;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DesignResource;
 use App\Models\Design;
+use App\Repositories\Contracts\IDesign;
+use App\Repositories\Eloquent\Criterion\ForUser;
+use App\Repositories\Eloquent\Criterion\IsLive;
+use App\Repositories\Eloquent\Criterion\LatestFirst;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -12,6 +16,19 @@ use Illuminate\Validation\Rule;
 
 class DesignController extends Controller
 {
+    protected IDesign $designRepo;
+
+    public function __construct(IDesign $designRepo)
+    {
+        $this->designRepo = $designRepo;
+    }
+
+    public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        $designs = $this->designRepo->withCriteria(new LatestFirst(), new IsLive(), new ForUser(1))->all();
+        return DesignResource::collection($designs);
+    }
+
     //
     public function update(Request $request, Design $design): DesignResource
     {
@@ -21,13 +38,13 @@ class DesignController extends Controller
             'tags' => ['required']
         ]);
         $this->authorize('update', $design);
-        $design->update($data + [
+        $this->designRepo->update($design, $data + [
                 'slug' => Str::slug($data['title']),
                 'is_live' => !$design->upload_successful ? false : $request->input('is_live')
             ]);
 
         //apply the tag
-        $design->retag($data['tags']);
+        $this->designRepo->applyTags($design, $data['tags']);
 
         return new DesignResource($design);
     }
@@ -43,8 +60,14 @@ class DesignController extends Controller
             }
         }
 
-        $design->delete();
+        $this->designRepo->delete($design);
 
         return response()->json(['message' => 'Record deleted'], 200);
+    }
+
+    public function findDesign($id)
+    {
+        $design = $this->designRepo->find($id);
+        return new DesignResource($design);
     }
 }

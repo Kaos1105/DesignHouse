@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Repositories\Contracts\IUser;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
@@ -13,11 +14,18 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    protected IUser $userRepo;
+
+    public function __construct(IUser $userRepo)
+    {
+        $this->userRepo = $userRepo;
+    }
+
     public function register(Request $request)
     {
         $data = $this->registerValidator($request);
 
-        $user = User::create([
+        $user = $this->userRepo->create([
             "username" => $data['username'],
             "name" => $data['name'],
             "email" => $data['email'],

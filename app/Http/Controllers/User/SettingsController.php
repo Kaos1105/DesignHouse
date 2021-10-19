@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Repositories\Contracts\IUser;
 use App\Rules\CheckSamePassword;
 use App\Rules\MatchOldPassword;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
@@ -13,6 +14,13 @@ use Illuminate\Support\Facades\Auth;
 class SettingsController extends Controller
 {
     //
+    protected IUser $userRepo;
+
+    public function __construct(IUser $userRepo)
+    {
+        $this->userRepo = $userRepo;
+    }
+
     public function updateProfile(Request $request): UserResource
     {
         $user = Auth::user();
@@ -28,9 +36,7 @@ class SettingsController extends Controller
         ]);
 
         $location = new Point($data['location']['latitude'], $data['location']['longitude']);
-        $user->update($data);
-        $user->location = $location;
-        $user->save();
+        $this->userRepo->updateUser($user, $data, $location);
         return new UserResource($user);
     }
 
@@ -40,8 +46,7 @@ class SettingsController extends Controller
             'current_password' => ['required', new CheckSamePassword],
             'password' => ['required', 'confirmed', 'min:6', new MatchOldPassword]
         ]);
-
-        Auth::user()->update([
+        $this->userRepo->update(Auth::user(), [
             'password' => bcrypt($data['password'])
         ]);
 
