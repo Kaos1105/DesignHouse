@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Designs;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DesignResource;
 use App\Models\Design;
+use App\Models\User;
 use App\Repositories\Contracts\IDesign;
+use App\Repositories\Eloquent\Criterion\EagerLoad;
 use App\Repositories\Eloquent\Criterion\ForUser;
 use App\Repositories\Eloquent\Criterion\IsLive;
 use App\Repositories\Eloquent\Criterion\LatestFirst;
@@ -25,7 +27,7 @@ class DesignController extends Controller
 
     public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        $designs = $this->designRepo->withCriteria(new LatestFirst(), new IsLive(), new ForUser(1))->all();
+        $designs = $this->designRepo->withCriteria(new LatestFirst(), new IsLive(), new EagerLoad(['user', 'comments']))->all();
         return DesignResource::collection($designs);
     }
 
@@ -49,7 +51,7 @@ class DesignController extends Controller
         return new DesignResource($design);
     }
 
-    public function destroy(Design $design)
+    public function destroy(Design $design): \Illuminate\Http\JsonResponse
     {
         $this->authorize('delete', $design);
 
@@ -65,9 +67,22 @@ class DesignController extends Controller
         return response()->json(['message' => 'Record deleted'], 200);
     }
 
-    public function findDesign($id)
+    public function like(Design $design): \Illuminate\Http\JsonResponse
+    {
+        $this->designRepo->like($design);
+
+        return response()->json(['message' => 'Successful'], 200);
+    }
+
+    public function findDesign($id): DesignResource
     {
         $design = $this->designRepo->find($id);
         return new DesignResource($design);
+    }
+
+    public function checkIfUserHasLike(Design $design): \Illuminate\Http\JsonResponse
+    {
+        $isLiked = $this->designRepo->isLikedByUser($design);
+        return response()->json(['liked' => $isLiked]);
     }
 }

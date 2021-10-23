@@ -12,6 +12,34 @@
 
 namespace App\Models{
 /**
+ * App\Models\Comment
+ *
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $user_id
+ * @property string $body
+ * @property string $commentable_type
+ * @property int $commentable_id
+ * @property-read Model|\Eloquent $commentable
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereCommentableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereCommentableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereUserId($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperComment extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Design
  *
  * @mixin IdeHelperDesign
@@ -27,6 +55,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int $upload_successful
  * @property string $disk
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Comment[] $comments
+ * @property-read int|null $comments_count
  * @property-read array $images
  * @property-read array $tag_array
  * @property-read array $tag_array_normalized
@@ -79,6 +109,8 @@ namespace App\Models{
  * @property string|null $location
  * @property string|null $formatted_address
  * @property int $available_to_hire
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Comment[] $comments
+ * @property-read int|null $comments_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Design[] $designs
  * @property-read int|null $designs_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications

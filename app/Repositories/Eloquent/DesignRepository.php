@@ -24,4 +24,24 @@ class DesignRepository extends BaseRepository implements IDesign
     {
         return Design::where('is_live', true)->get();
     }
+
+    public function addComment(Design $design, array $data): Model
+    {
+        //create the comment for the design
+        return $design->comments()->create($data);
+    }
+
+    public function like(Design $design)
+    {
+        if ($design->isLikedByUser(auth()->id())) {
+            $design->unlike();
+        } else {
+            $design->like();
+        }
+    }
+
+    public function isLikedByUser(Design $design)
+    {
+        return $design->isLikedByUser(auth()->id());
+    }
 }

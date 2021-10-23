@@ -2,15 +2,14 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Design;
+use App\Models\Comment;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Transform the resource into an array.
- *
- * @mixin Design
+ * @mixin Comment
  */
-class DesignResource extends JsonResource
+class CommentResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -22,18 +21,7 @@ class DesignResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'user' => new UserResource($this->whenLoaded('user')),
-            'title' => $this->title,
-            'slug' => $this->slug,
-            'images' => $this->images,
-            'is_live' => $this->is_live,
-            'likes_count' => $this->likes()->count(),
-            'description' => $this->description,
-            'comments' => CommentResource::collection($this->whenLoaded('comments')),
-            'tag_list' => [
-                'tags' => $this->tag_array,
-                'normalized' => $this->tag_array_normalized
-            ],
+            'body' => $this->body,
             'created_at_dates' => [
                 'created_at_human' => $this->created_at->diffForHumans(),
                 'created_at' => $this->created_at,
@@ -42,6 +30,7 @@ class DesignResource extends JsonResource
                 'updated_at_human' => $this->updated_at->diffForHumans(),
                 'updated_at' => $this->updated_at,
             ],
+            'user' => new UserResource($this->whenLoaded('user'))
         ];
     }
 }

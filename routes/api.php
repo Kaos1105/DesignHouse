@@ -33,6 +33,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('designs', [\App\Http\Controllers\Designs\UploadController::class, 'upload']);
     Route::put('designs/{design}', [\App\Http\Controllers\Designs\DesignController::class, 'update']);
     Route::delete('designs/{design}', [\App\Http\Controllers\Designs\DesignController::class, 'destroy']);
+
+    // Comments
+    Route::post('designs/{design}/comments', [\App\Http\Controllers\Designs\CommentController::class, 'store']);
+    Route::put('comments/{comment}', [\App\Http\Controllers\Designs\CommentController::class, 'update']);
+    Route::delete('comments/{comment}', [\App\Http\Controllers\Designs\CommentController::class, 'destroy']);
+
+    // Likes
+    Route::post('designs/{design}/like', [\App\Http\Controllers\Designs\DesignController::class, 'like']);
+    Route::get('designs/{design}/liked', [\App\Http\Controllers\Designs\DesignController::class, 'checkIfUserHasLike']);
 });
 
 // Route for guest only
