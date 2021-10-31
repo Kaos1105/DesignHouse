@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Route group for authenticated users only
 Route::middleware(['auth:sanctum'])->group(function () {
+    // User profile
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::put('settings/profile', [\App\Http\Controllers\User\SettingsController::class, 'updateProfile']);
     Route::put('settings/password', [\App\Http\Controllers\User\SettingsController::class, 'updatePassword']);
@@ -42,6 +43,28 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Likes
     Route::post('designs/{design}/like', [\App\Http\Controllers\Designs\DesignController::class, 'like']);
     Route::get('designs/{design}/liked', [\App\Http\Controllers\Designs\DesignController::class, 'checkIfUserHasLike']);
+
+    // Teams
+    Route::post('teams', [\App\Http\Controllers\Teams\TeamsController::class, 'store']);
+    Route::get('teams/{id}', [\App\Http\Controllers\Teams\TeamsController::class, 'findById']);
+    Route::get('teams', [\App\Http\Controllers\Teams\TeamsController::class, 'index']);
+    Route::get('users/teams', [\App\Http\Controllers\Teams\TeamsController::class, 'fetchUserTeams']);
+    Route::put('teams/{team}', [\App\Http\Controllers\Teams\TeamsController::class, 'update']);
+    Route::delete('teams/{team}', [\App\Http\Controllers\Teams\TeamsController::class, 'destroy']);
+    Route::delete('teams/{team}/users/{user}', [\App\Http\Controllers\Teams\TeamsController::class, 'removeUserFromTeam']);
+
+    // Invitations
+    Route::post('invitations/{team}', [\App\Http\Controllers\InvitationsController::class, 'invite']);
+    Route::post('invitations/{invitation}/resend', [\App\Http\Controllers\InvitationsController::class, 'resend']);
+    Route::post('invitations/{invitation}/response', [\App\Http\Controllers\InvitationsController::class, 'respond']);
+    Route::delete('invitations/{invitation}', [\App\Http\Controllers\InvitationsController::class, 'destroy']);
+
+    // Chats
+    Route::post('chats', [\App\Http\Controllers\Chat\ChatController::class, 'sendMessage']);
+    Route::get('chats', [\App\Http\Controllers\Chat\ChatController::class, 'getUserChats']);
+    Route::get('chats/{chatId}/messages', [\App\Http\Controllers\Chat\ChatController::class, 'getChatMessages']);
+    Route::put('chats/{chat}/markAsRead', [\App\Http\Controllers\Chat\ChatController::class, 'markAsRead']);
+    Route::delete('messages/{message}', [\App\Http\Controllers\Chat\ChatController::class, 'destroyMessage']);
 });
 
 // Route for guest only
@@ -56,4 +79,7 @@ Route::middleware('guest')->group(function () {
     //Get design
     Route::get('designs', [\App\Http\Controllers\Designs\DesignController::class, 'index']);
     Route::get('users', [\App\Http\Controllers\User\UserController::class, 'index']);
+
+    // Get team
+    Route::get('teams/slug/{slug}', [\App\Http\Controllers\Teams\TeamsController::class, 'findBySlug']);
 });

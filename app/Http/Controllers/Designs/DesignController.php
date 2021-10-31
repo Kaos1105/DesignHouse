@@ -37,11 +37,13 @@ class DesignController extends Controller
         $data = $request->validate([
             'title' => ['required', Rule::unique('designs')->ignore($design->id)],
             'description' => ['required', 'string', 'min:20', 'max:140'],
-            'tags' => ['required']
+            'tags' => ['required'],
+            'team' => ['required_if:assign_to_team,true']
         ]);
         $this->authorize('update', $design);
         $this->designRepo->update($design, $data + [
                 'slug' => Str::slug($data['title']),
+                'team_id' => $data['team'],
                 'is_live' => !$design->upload_successful ? false : $request->input('is_live')
             ]);
 

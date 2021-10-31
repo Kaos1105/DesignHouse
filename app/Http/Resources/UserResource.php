@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 
 /**
@@ -23,8 +24,11 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'username' => $this->username,
-            'email' => $this->email,
+            $this->mergeWhen(Auth::id() == $this->id, [
+                'email' => $this->email,
+            ]),
             'name' => $this->name,
+            'designs' => DesignResource::collection($this->whenLoaded('designs')),
             'create_dates' => [
                 'created_at_human' => $this->created_at->diffForHumans(),
                 'created_at' => $this->created_at

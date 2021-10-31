@@ -34,6 +34,10 @@ class DesignResource extends JsonResource
                 'tags' => $this->tag_array,
                 'normalized' => $this->tag_array_normalized
             ],
+            'team' => $this->team ? [
+                'name' => $this->team->name,
+                'slug' => $this->team->slug
+            ] : null,
             'created_at_dates' => [
                 'created_at_human' => $this->created_at->diffForHumans(),
                 'created_at' => $this->created_at,
