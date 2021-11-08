@@ -37,6 +37,9 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         'formatted_address',
         'available_to_hire'
     ];
+    protected $appends = [
+        'photo_url'
+    ];
 
     protected $spatialFields = [
         'location',
@@ -60,6 +63,11 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getPhotoUrlAttribute()
+    {
+        return 'https://www.gravatar.com/avatar/' . md5(strtolower($this->email)) . 'jpg?s=200&d=mm';
+    }
 
     // relationship methods
     public function designs()

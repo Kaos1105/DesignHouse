@@ -21,7 +21,19 @@ class UserController extends Controller
 
     public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        $users = $this->userRepo->withCriteria(new EagerLoad(['designs']))->all();
+        $users = $this->userRepo->withCriteria([new EagerLoad(['designs'])])->all();
         return UserResource::collection($users);
+    }
+
+    public function search(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        $designers = $this->userRepo->search($request);
+        return UserResource::collection($designers);
+    }
+
+    public function findByUsername(string $username)
+    {
+        $user = $this->userRepo->findWhereFirst('username', $username);
+        return new UserResource($user);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Designs;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DesignResource;
 use App\Models\Design;
+use App\Models\Team;
 use App\Models\User;
 use App\Repositories\Contracts\IDesign;
 use App\Repositories\Eloquent\Criterion\EagerLoad;
@@ -27,7 +28,7 @@ class DesignController extends Controller
 
     public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        $designs = $this->designRepo->withCriteria(new LatestFirst(), new IsLive(), new EagerLoad(['user', 'comments']))->all();
+        $designs = $this->designRepo->withCriteria([new LatestFirst(), new IsLive(), new EagerLoad(['user', 'comments'])])->all();
         return DesignResource::collection($designs);
     }
 
@@ -82,9 +83,34 @@ class DesignController extends Controller
         return new DesignResource($design);
     }
 
+    public function findBySlug($slug): DesignResource
+    {
+        $design = $this->designRepo->withCriteria([new IsLive()])->findWhereFirst('slug', $slug);
+        return new DesignResource($design);
+    }
+
     public function checkIfUserHasLike(Design $design): \Illuminate\Http\JsonResponse
     {
         $isLiked = $this->designRepo->isLikedByUser($design);
         return response()->json(['liked' => $isLiked]);
+    }
+
+    public function search(Request $request)
+    {
+        $design = $this->designRepo->search($request);
+
+        return DesignResource::collection($design);
+    }
+
+    public function getForTeam(string $teamId)
+    {
+        $designs = $this->designRepo->withCriteria([new IsLive()])->findWhere('team_id', $teamId);
+        return DesignResource::collection($designs);
+    }
+
+    public function getForUser(string $userId)
+    {
+        $designs = $this->designRepo->withCriteria([new IsLive()])->findWhere('user_id', $userId);
+        return DesignResource::collection($designs);
     }
 }

@@ -6,7 +6,9 @@ use App\Http\Resources\DesignResource;
 use App\Models\Design;
 use App\Models\User;
 use App\Repositories\Contracts\IDesign;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class DesignRepository extends BaseRepository implements IDesign
 {
@@ -40,8 +42,41 @@ class DesignRepository extends BaseRepository implements IDesign
         }
     }
 
-    public function isLikedByUser(Design $design)
+    public function isLikedByUser(Design $design): bool
     {
         return $design->isLikedByUser(auth()->id());
+    }
+
+    public function search(Request $request)
+    {
+        $query = $this->model->query();
+        $query->where('is_live', true);
+
+        // return only designs with comments
+        if ($request->input('has_comments')) {
+            $query->has('comments');
+        }
+
+        // return only designs assigned to teams
+        if ($request->input('has_team')) {
+            $query->has('team');
+        }
+
+        // search title and description for provided string
+        if ($request->has('q')) {
+            $query->where(function (Builder $builder) use ($request) {
+                $builder->where('title', 'like', '%' . $request->query('q') . '%')
+                    ->orWhere('description', 'like', '%' . $request->query('q') . '%');
+            });
+        }
+
+        // order the query by likes or latest first
+        if ($request->input('orderBy') == 'likes') {
+            $query->withCount('likes')->orderByDesc('likes_count');
+        } else {
+            $query->latest();
+        }
+
+        return $query->get();
     }
 }

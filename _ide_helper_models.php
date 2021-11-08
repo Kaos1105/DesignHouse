@@ -263,6 +263,7 @@ namespace App\Models{
  * @property-read int|null $comments_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Design[] $designs
  * @property-read int|null $designs_count
+ * @property-read mixed $photo_url
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invitation[] $invitations
  * @property-read int|null $invitations_count
  * @property-read \Illuminate\Database\Eloquent\Collection|Message[] $messages

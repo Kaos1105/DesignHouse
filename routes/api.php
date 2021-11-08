@@ -30,7 +30,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('settings/password', [\App\Http\Controllers\User\SettingsController::class, 'updatePassword']);
 
     //Upload Designs
-    Route::get('designs/{id}', [\App\Http\Controllers\Designs\DesignController::class, 'findDesign']);
     Route::post('designs', [\App\Http\Controllers\Designs\UploadController::class, 'upload']);
     Route::put('designs/{design}', [\App\Http\Controllers\Designs\DesignController::class, 'update']);
     Route::delete('designs/{design}', [\App\Http\Controllers\Designs\DesignController::class, 'destroy']);
@@ -46,9 +45,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Teams
     Route::post('teams', [\App\Http\Controllers\Teams\TeamsController::class, 'store']);
-    Route::get('teams/{id}', [\App\Http\Controllers\Teams\TeamsController::class, 'findById']);
-    Route::get('teams', [\App\Http\Controllers\Teams\TeamsController::class, 'index']);
-    Route::get('users/teams', [\App\Http\Controllers\Teams\TeamsController::class, 'fetchUserTeams']);
     Route::put('teams/{team}', [\App\Http\Controllers\Teams\TeamsController::class, 'update']);
     Route::delete('teams/{team}', [\App\Http\Controllers\Teams\TeamsController::class, 'destroy']);
     Route::delete('teams/{team}/users/{user}', [\App\Http\Controllers\Teams\TeamsController::class, 'removeUserFromTeam']);
@@ -78,8 +74,20 @@ Route::middleware('guest')->group(function () {
 
     //Get design
     Route::get('designs', [\App\Http\Controllers\Designs\DesignController::class, 'index']);
+    Route::get('designs/slug/{slug}', [\App\Http\Controllers\Designs\DesignController::class, 'findBySlug']);
+    Route::get('search/designs', [\App\Http\Controllers\Designs\DesignController::class, 'search']);
+    Route::get('designs/{id}', [\App\Http\Controllers\Designs\DesignController::class, 'findDesign']);
+    Route::get('teams/{teamId}/designs', [\App\Http\Controllers\Designs\DesignController::class, 'getForTeam']);
+    Route::get('users/{userId}/designs', [\App\Http\Controllers\Designs\DesignController::class, 'getForUser']);
+
+    // Get user
     Route::get('users', [\App\Http\Controllers\User\UserController::class, 'index']);
+    Route::get('users/{username}', [\App\Http\Controllers\User\UserController::class, 'findByUsername']);
+    Route::get('search/designers', [\App\Http\Controllers\User\UserController::class, 'search']);
 
     // Get team
     Route::get('teams/slug/{slug}', [\App\Http\Controllers\Teams\TeamsController::class, 'findBySlug']);
+    Route::get('teams/{id}', [\App\Http\Controllers\Teams\TeamsController::class, 'findById']);
+    Route::get('teams', [\App\Http\Controllers\Teams\TeamsController::class, 'index']);
+    Route::get('users/teams', [\App\Http\Controllers\Teams\TeamsController::class, 'fetchUserTeams']);
 });
