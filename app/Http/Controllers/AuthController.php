@@ -68,9 +68,10 @@ class AuthController extends Controller
             if (Auth::user() instanceof MustVerifyEmail && !Auth::user()->hasVerifiedEmail()) {
                 return response()->json([
                     'message' => 'PLease verify your email account first'
-                ], 401);
+                ], 422);
             }
 
+            Auth::user()->tokens()->delete();
             $token = Auth::user()->createToken('auth_token')->plainTextToken;
 
             $response = [

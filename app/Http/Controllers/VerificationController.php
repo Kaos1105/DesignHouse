@@ -75,6 +75,6 @@ class VerificationController extends Controller
 
         return response()->json([
             'status' => "Verification link resent"
-        ], 422);
+        ], 201);
     }
 }

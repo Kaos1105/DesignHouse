@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\VerificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware(['auth:sanctum'])->group(function () {
     // User profile
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('me', [UserController::class, 'me'])->name('me');
     Route::put('settings/profile', [\App\Http\Controllers\User\SettingsController::class, 'updateProfile']);
     Route::put('settings/password', [\App\Http\Controllers\User\SettingsController::class, 'updatePassword']);
 
@@ -64,7 +66,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 // Route for guest only
-Route::middleware('guest')->group(function () {
+Route::middleware('api')->group(function () {
     Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('register', [AuthController::class, 'register'])->name('register');
     Route::post('verification/verify/{user}', [VerificationController::class, 'verify'])->name('verification.verify');
